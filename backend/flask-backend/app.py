@@ -25,7 +25,7 @@ APP.config['UPLOAD_EXTENSIONS'] = ['.jpg','.jpeg','.png']
 APP.config['JSON_SORT_KEYS'] = False
 APP.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 # Mongo Configuaration
-APP.config["MONGO_URI"] = os.getenv("MONGO_URI","mongodb://localhost:27017/civic_issues_db")
+APP.config["MONGO_URI"] = os.getenv("MONGO_URI","mongodb+srv://jadhav_db_user:Lh5GeGTA0uBtPIx4@cluster0.gwnwdgk.mongodb.net/civic_issues_db?appName=Cluster0")
 
 mongo.init_app(APP)
 # register AI routes
