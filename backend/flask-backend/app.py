@@ -30,9 +30,9 @@ APP.config["MONGO_URI"] = os.getenv("MONGO_URI","mongodb+srv://jadhav_db_user:Lh
 mongo.init_app(APP)
 # register AI routes
 
-APP.register_blueprint(AI_BP,url_prefix="/api/ai")
-APP.register_blueprint(CI_BP,url_prefix="/api/ai")
-APP.register_blueprint(FEED_BP,url_prefix="/api")
+APP.register_blueprint(AI_BP,url_prefix="/ai")
+APP.register_blueprint(CI_BP,url_prefix="/ai")
+APP.register_blueprint(FEED_BP,url_prefix="/ai")
 
 
 @APP.route("/")

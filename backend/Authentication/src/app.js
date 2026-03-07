@@ -35,8 +35,8 @@ app.get('/', (req, res) => {
 
 // Route
 
-app.use('/api/citizens', citizenRoutes);
-app.use('/api/admins', adminRoutes);
+app.use('/auth/citizens', citizenRoutes);
+app.use('/auth/admins', adminRoutes);
 
 // 404 handler
 
