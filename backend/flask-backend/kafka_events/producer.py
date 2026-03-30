@@ -7,7 +7,7 @@ import os
 
 # config
 
-KAFKA_BROKER=os.getenv("KAFKA_BROKER","localhost:9092")
+KAFKA_BROKER=os.getenv("KAFKA_BROKER","127.0.0.1:9092")
 KAFKA_TOPIC=os.getenv("KAFKA_TOPIC","report_events")
 
 

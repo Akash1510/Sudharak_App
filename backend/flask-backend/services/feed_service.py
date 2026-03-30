@@ -78,7 +78,7 @@ def get_feed_for_user():
 
         report["interaction"] = {
             "status":interaction.get("status"),
-            "upote_count":interaction.get("upvote_count",0),
+            "upvote_count":interaction.get("upvote_count",0),
             "comment_count":len(interaction.get("comments",[])),
             "recent_comments": interaction.get("comments", []),
             "user_has_upvoted": user_id in interaction.get("upvoted_by",[])

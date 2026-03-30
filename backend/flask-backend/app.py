@@ -20,7 +20,7 @@ CORS(APP,origins="*")
 
 
 # app configuration
-APP.config['MAX_CONTENT_LENGTH'] =  50 * 1024 * 1024 # 50 MB limit
+APP.config['MAX_CONTENT_LENGTH'] =  5* 1024 * 1024 # 5 MB limit
 APP.config['UPLOAD_EXTENSIONS'] = ['.jpg','.jpeg','.png']
 APP.config['JSON_SORT_KEYS'] = False
 APP.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
