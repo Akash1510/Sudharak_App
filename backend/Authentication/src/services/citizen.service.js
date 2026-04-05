@@ -145,7 +145,19 @@ static async updateProfile(user_id,profileData){
 }
 
 
+static async getCitizenById(user_id){
+    if(!user_id){
+        throw new Error("User Id is Required");
+    }
 
+    const citizen = await CitizenRepository.findById(user_id);
+
+    if(!citizen){
+        throw new Error("User Not Found");
+    }
+
+    return new CitizenEntity(citizen);
+}
 
 
 }

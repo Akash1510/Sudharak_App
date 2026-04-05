@@ -89,5 +89,11 @@ router.delete(
   ReportController.DeleteComment
 );
 
+router.get(
+  "/:reportId/resolved-image",
+  reportExists,
+  ReportController.GetResolvedImage
+);
+
 
 module.exports = router;

@@ -126,6 +126,18 @@ static async deleteComment(reportId,commentId,userId){
     
   }
 
+
+  // Get Resolved Image URL 
+
+  static async GetResolvedImage(report_id){
+
+    if(!report_id){
+      throw new Error("Report Id is Required");
+    }
+
+    return ReportRepository.findResolvedImage(report_id);
+
+  }
 }
 
 module.exports = ReportService;

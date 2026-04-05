@@ -60,7 +60,21 @@ class AdminService {
         return NewAdmin;
     }
 
-    // 
+    // Get the Admin Profile Name username and department;
+
+    static async GetAdminProfile(admin_id){
+        if(!admin_id){
+            throw new Error("Admin Id is Required");
+        }
+
+        const admin = await AdminRepository.findAdminById(admin_id);
+
+        if(!admin){
+            throw new Error("Admin Not Found");
+        }
+
+        return new AdminEntity(admin);
+    }
 }
 
 

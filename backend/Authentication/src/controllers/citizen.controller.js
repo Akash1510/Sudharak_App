@@ -85,6 +85,32 @@ static async UpdateProfile(req,res){
       });
   }
 }
+
+
+static async GetProfile(req,res){
+  try {
+   
+    const user_id = req.user.id;
+
+    const result = await CitizenService.getCitizenById(user_id);
+
+    return res.status(200).json({
+      success:true,
+      data:result,
+      message:"Profile fetched Successfully"
+
+    });
+
+
+
+  }
+  catch (error) {
+     return res.status(500).json({
+      success:false,
+      message:error.message
+     })
+  }
+}
 }
 
 module.exports = CitizenController;

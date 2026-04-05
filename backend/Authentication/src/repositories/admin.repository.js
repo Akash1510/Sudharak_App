@@ -29,6 +29,11 @@ class AdminRepository {
     }
 
 
+    static async findAdminById(adminId){
+        const AdminData = await AdminModel.findById(adminId);
+        return AdminData ? new AdminEntity(AdminData.toJSON()) : null;
+    }
+
 }
 
 

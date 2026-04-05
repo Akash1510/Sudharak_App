@@ -14,9 +14,15 @@ router.post('/verify-otp', CitizenController.VerifyOTP);
 const verifyToken = require("../middlwares/verifyToken.middleware");
 
 router.put(
-  "/profile",
+  "/profile/edit",
   verifyToken,
   CitizenController.UpdateProfile
+);
+
+router.get(
+  "/profile",
+  verifyToken,
+  CitizenController.GetProfile
 );
 
 module.exports = router;

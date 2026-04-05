@@ -209,6 +209,15 @@ class PostRepository {
     );
   }
 
+
+  // Get Resolved Image URl
+
+  static async findResolvedImage(report_id){
+    const post = await this.findByReportId(report_id);
+
+    return post.resolved_image || null;
+  }
+
 }
 
 module.exports = PostRepository;

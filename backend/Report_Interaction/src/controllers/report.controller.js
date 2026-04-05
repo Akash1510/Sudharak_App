@@ -157,11 +157,11 @@ class ReportController {
     
     try {
 
-      const {report_id,comment_id} = req.params;
+      const {reportId,commentId} = req.params;
       const user_id = req.user.id;
       const {text} = req.body;
 
-      const result = await ReportService.editComment(report_id,comment_id,user_id,text);
+      const result = await ReportService.editComment(reportId,commentId,user_id,text);
 
       return res.status(200).json({
         success:true,
@@ -183,10 +183,10 @@ class ReportController {
 static async DeleteComment(req,res){
   try {
     
-    const {report_id,comment_id} = req.params;
+    const {reportId,commentId} = req.params;
     const user_id = req.user.id;
 
-    const result = await ReportService.deleteComment(report_id,comment_id,user_id);
+    const result = await ReportService.deleteComment(reportId,commentId,user_id);
 
     return res.status(200).json({
       success:true,
@@ -198,6 +198,34 @@ static async DeleteComment(req,res){
         success:false,
         message:error.message
       })
+  }
+}
+
+
+// Get  Resolved Image if Status is Resolved
+static async GetResolvedImage(req,res){
+  try{
+    const {reportId} = req.params;
+
+    const result = await ReportService.GetResolvedImage(reportId);
+
+    if(result.status !== "Resolved"){
+      return res.status(400).json({
+        success:false,
+        message:"Report is Not Resolved Yet"
+      });
+    }
+    return res.status(200).json({
+      success:true,
+      data:result
+    });
+
+
+  } catch(error){
+    return res.status(500).json({
+      success:false,
+      message:error.message
+    });
   }
 }
 

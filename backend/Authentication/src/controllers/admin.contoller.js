@@ -14,9 +14,9 @@ class AdminController {
       return res.status(200).json({
         success: true,
         message: "Admin Logged In Successfully",
-        token : result.token,
-        admin:result.admin
-        
+        token: result.token,
+        admin: result.admin
+
       });
     } catch (error) {
       return res.status(500).json({
@@ -48,6 +48,39 @@ class AdminController {
         success: false,
         message: error.message,
       });
+    }
+  }
+
+
+  // Get Admin profile 
+
+  static async GetProfile(req, res) {
+
+    try {
+      const admin_id = req.user.id;
+
+      const role = req.user.role;
+
+      if(role !== "ADMIN"){
+        return res.status(403).json({
+          success: false,
+          message: "Access denied. Only admins can access this resource."
+        });
+      }
+
+      const result = await AdminService.GetAdminProfile(admin_id);
+
+      return res.status(200).json({
+        success: true,
+        data: result,
+        message: "Admin Profile fetched Successfully"
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+
     }
   }
 }

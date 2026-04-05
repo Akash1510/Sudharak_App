@@ -4,7 +4,7 @@ const ReportRepository = require("../repositories/report.repository");
 
 const kafka = new Kafka({
     clientId: "report-interaction-service",
-    brokers: ["localhost:9092"]
+    brokers: ["127.0.0.1:9092"]
 });
 
 const consumer = kafka.consumer({
