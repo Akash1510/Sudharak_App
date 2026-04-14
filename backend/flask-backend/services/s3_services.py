@@ -6,7 +6,7 @@ AWS_ACCESS_KEY = os.getenv("AWS_ACCESS_KEY")
 AWS_SECRET_KEY = os.getenv("AWS_SECRET_KEY")
 AWS_REGION = os.getenv("AWS_REGION")
 
-Unresolved_Bucket = os.getenv("Unresolved_Bucket")
+Unresolved_Bucket = os.getenv("UNRESOLVED_BUCKET")
 
 
 s3 = boto3.client(
