@@ -1,0 +1,40 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+
+          script: |
+            cd ~/Sudharak_App
+
+            echo "Pull latest code"
+            git pull origin main
+
+            echo "Install Node dependencies"
+            cd backend/Authentication
+            npm install
+
+            cd ../Report_Interaction
+            npm install
+
+            echo "Install Python dependencies"
+            cd ../flask-backend
+            source venv/bin/activate
+            pip install -r requirements.txt
+
+            echo "Restart services"
+            pm2 restart all
