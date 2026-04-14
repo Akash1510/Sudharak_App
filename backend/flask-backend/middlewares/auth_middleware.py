@@ -3,7 +3,7 @@ import jwt,os
 from functools import wraps
 from flask import request,jsonify,g
 
-JWT_SECRET = os.getenv("JWT_SECRET","littleboy@@77")
+JWT_SECRET = os.getenv("JWT_SECRET","littleboy@@7776032964")
 JWT_ALGORITHM="HS256"
 
 def verify_token(required_role=None):
