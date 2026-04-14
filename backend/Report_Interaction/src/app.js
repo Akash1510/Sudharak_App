@@ -19,6 +19,6 @@ app.use("/reports", reportroutes);
 app.use('/dashboard',dashboardroutes);
 
 
-app.listen(process.env.PORT,127.0.0.1, () => {
+app.listen(process.env.PORT,"0.0.0.0", () => {
     console.log(`Server is Running on port :${process.env.PORT}`);
 });
