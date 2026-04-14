@@ -3,12 +3,13 @@ import logging
 from kafka import KafkaProducer
 from kafka.errors import KafkaError
 import os
-
+import traceback
+traceback.print_exc()
 
 # config
 
-KAFKA_BROKER=os.getenv("KAFKA_BROKER","127.0.0.1:9092")
-KAFKA_TOPIC=os.getenv("KAFKA_TOPIC","report_events")
+KAFKA_BROKER="127.0.0.1:9092"
+KAFKA_TOPIC="report_events"
 
 
 # create producer (Singleton pattern)
@@ -26,7 +27,9 @@ def get_producer():
                 value_serializer=lambda v: json.dumps(v).encode("utf-8"),
                 retries=5,
                 acks="all",
-                linger_ms=5
+                linger_ms=5,
+                request_timeout_ms=10000,
+                api_version_auto_timeout_ms=10000
             )
             print("Kafka producer Connected")
         except Exception as e:
