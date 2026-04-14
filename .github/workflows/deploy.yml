@@ -22,7 +22,9 @@ jobs:
             cd ~/Sudharak_App
 
             echo "Pull latest code"
-            git pull origin main
+            git fetch origin main
+            git reset --hard origin/main
+            git clean -fd
 
             echo "Install Node dependencies"
             cd backend/Authentication
