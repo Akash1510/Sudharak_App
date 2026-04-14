@@ -23,7 +23,7 @@ def verify_token(required_role=None):
             
             try:
                 token = auth_header.split(" ")[1] #bearer <token>
-
+                print(token)
                 decoded = jwt.decode(
                     token,
                     JWT_SECRET,
