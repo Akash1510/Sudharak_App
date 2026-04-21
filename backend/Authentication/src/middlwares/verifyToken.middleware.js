@@ -53,7 +53,7 @@ const verifyToken = (req, res, next) => {
     // 4️⃣ Attach User to Request
     // =====================================
     req.user = {
-      id: decoded._id,
+      id: decoded.id,
       role: decoded.role,
       department: decoded.department || null
     };
