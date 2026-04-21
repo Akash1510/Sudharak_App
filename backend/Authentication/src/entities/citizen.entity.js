@@ -13,7 +13,7 @@ class CitizenEntity {
         is_verified,
         created_at
     }) {
-        this.id = _id || null;
+        this.id = _id;
         this.name = name || null;
         this.age = age || null;
         this.gender = gender || null;
