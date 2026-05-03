@@ -1,37 +1,35 @@
 const CitizenService = require("../services/citizen.service");
 
 class CitizenController {
+  // Request OTP for Signup or login
 
   static async RequestOTP(req, res) {
     try {
-      const { name, mobile_number, location } = req.body;
+      const { name, mobile_number ,location} = req.body;
 
       if (!mobile_number) {
         return res.status(400).json({
-          success: false,
-          message: "Mobile Number is required",
+          STATUS: "Failed",
+          MESSAGE: "Mobile Number is required",
         });
       }
 
-      const response = await CitizenService.requestOTP({
-        name,
-        mobile_number,
-        location,
-      });
+      const response = await CitizenService.requestOTP({ name, mobile_number ,location});
 
       return res.status(200).json({
-        success: true,
-        message: response.message,
+        STATUS: "Success",
+        MESSAGE: response.message
       });
     } catch (error) {
-      console.error("RequestOTP Error:", error.message);
-
-      return res.status(400).json({
-        success: false,
-        message: error.message,
+      console.log("Error in Request OTP Citizen Controller:", error.message);
+      return res.status(401).json({
+        STATUS: "Failed",
+        MESSAGE: error.message,
       });
     }
   }
+
+  // Verify OTP for Login confirmation
 
   static async VerifyOTP(req, res) {
     try {
@@ -39,8 +37,8 @@ class CitizenController {
 
       if (!mobile_number || !otp) {
         return res.status(400).json({
-          success: false,
-          message: "Mobile Number and OTP are required",
+          STATUS: "Failed",
+          MESSAGE: "Mobile Number and OTP are required",
         });
       }
 
@@ -50,66 +48,69 @@ class CitizenController {
       });
 
       return res.status(200).json({
-        success: true,
-        message: response.message,
-        token: response.token,
-        citizen_id: response.citizen_id,
+        STATUS: "Success",
+        MESSAGE: response.message,
+        TOKEN: response.token,
+        CITIZEN_ID: response.citizen,
       });
     } catch (error) {
-      console.error("VerifyOTP Error:", error.message);
-
-      return res.status(400).json({
-        success: false,
-        message: error.message,
+      console.log("Error in Verify OTP Citizen Controller:", error.message);
+      return res.status(401).json({
+        STATUS: "Failed",
+        MESSAGE: error.message,
       });
     }
   }
 
-  static async UpdateProfile(req, res) {
-    try {
-      const user_id = req.user.id;
-      const profileData = req.body;
 
-      const result = await CitizenService.updateProfile(
-        user_id,
-        profileData
-      );
 
-      return res.status(200).json({
-        success: true,
-        message: "Profile updated successfully",
-        data: result,
-      });
-    } catch (error) {
-      console.error("UpdateProfile Error:", error.message);
+// Update Profile
 
+static async UpdateProfile(req,res){
+  try {
+     const user_id = req.user.id;
+     const profileData = req.body;
+
+     const result = await CitizenService.updateProfile(user_id,profileData);
+
+     return res.status(200).json({
+      success:true,
+      message:"Profile updated Successfully",
+      data:result
+     });
+  } catch (error) {
       return res.status(500).json({
         success: false,
         message: error.message,
       });
-    }
   }
+}
 
-  static async GetProfile(req, res) {
-    try {
-      const user_id = req.user.id;
 
-      const result = await CitizenService.getCitizenById(user_id);
+static async GetProfile(req,res){
+  try {
+   
+    const user_id = req.user.id;
 
-      return res.status(200).json({
-        success: true,
-        data: result,
-        message: "Profile fetched successfully",
-      });
-    } catch (error) {
-      console.error("GetProfile Error:", error.message);
+    const result = await CitizenService.getCitizenById(user_id);
 
-      return res.status(500).json({
-        success: false,
-        message: error.message,
-      });
-    }
+    return res.status(200).json({
+      success:true,
+      data:result,
+      message:"Profile fetched Successfully"
+
+    });
+
+
+
   }
+  catch (error) {
+     return res.status(500).json({
+      success:false,
+      message:error.message
+     })
+  }
+}
 }
 
 module.exports = CitizenController;
