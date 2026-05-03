@@ -1,76 +1,64 @@
-
-const CitizenModel = require('../models/cititzen.model');
+const CitizenModel = require('../models/citizen.model');
 const CitizenEntity = require('../entities/citizen.entity');
 
 class CitizenRepository {
 
-
-    // find Citizen By Mobile Number
-
     static async findByMobileNumber(mobile_number) {
-        const CitizenData = await CitizenModel.findOne({ mobile_number });
-        return CitizenData ? new CitizenEntity(CitizenData) : null;
+        const data = await CitizenModel.findOne({ mobile_number }).lean();
+        return data ? new CitizenEntity(data) : null;
     }
 
-    // create With Name mobile number and otp
-
-    static async CreateOrUpdateForOTP({ name, mobile_number, otp,location }) {
-
-        const CitizenData = await CitizenModel.findOneAndUpdate({
-            mobile_number
-        }, {
-            name, mobile_number, otp,location,
-            is_verified: false
-        }, {
-            new: true,
-            upsert: true
-        });
-
-        return CitizenData ? new CitizenEntity(CitizenData) : null;
-    }
-
-
-
-   
-
-    // Find By Id and Update the Citizen Profile
-
-    static async UpdateProfile(user_id, profileData) {
-
-        const CitizenData = await CitizenModel.findByIdAndUpdate(
-            user_id,
+    static async createOrUpdateForOTP({ name, mobile_number, otp, location, otp_expires_at }) {
+        const data = await CitizenModel.findOneAndUpdate(
+            { mobile_number },
             {
-                $set: profileData
-            }, {
-            new: true
-        }
-        )
-        return CitizenData ? new CitizenEntity(CitizenData) : null;
+                name,
+                mobile_number,
+                otp,
+                location,
+                otp_expires_at,
+                is_verified: false
+            },
+            {
+                new: true,
+                upsert: true
+            }
+        ).lean();
+
+        return data ? new CitizenEntity(data) : null;
     }
 
-    // find by Id
+    static async updateProfile(user_id, profileData) {
+        const data = await CitizenModel.findByIdAndUpdate(
+            user_id,
+            { $set: profileData },
+            {
+                new: true,
+                runValidators: true
+            }
+        ).lean();
+
+        return data ? new CitizenEntity(data) : null;
+    }
 
     static async findById(citizenId) {
-        const CitizenData = await CitizenModel.findById(citizenId);
-        return CitizenData ? new CitizenEntity(CitizenData) : null;
+        const data = await CitizenModel.findById(citizenId).lean();
+        return data ? new CitizenEntity(data) : null;
     }
 
-
     static async markVerified(citizenId) {
+        const data = await CitizenModel.findByIdAndUpdate(
+            citizenId,
+            {
+                is_verified: true,
+                otp: null,
+                otp_expires_at: null
+            },
+            { new: true }
+        ).lean();
 
-    return CitizenModel.findByIdAndUpdate(
-        citizenId,
-        {
-            is_verified: true,
-            otp: null,
-            otp_expires_at: null
-        },
-        { new: true }
-    );
+        return data ? new CitizenEntity(data) : null;
+    }
 }
-
-
-}
-
 
 module.exports = CitizenRepository;

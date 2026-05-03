@@ -1,32 +1,25 @@
-
-
 class CitizenEntity {
+    constructor(data) {
 
-    constructor({
-        _id,
-        name,
-        age,
-        gender,
-        location,
-        mobile_number,
-        otp,
-        is_verified,
-        created_at
-    }) {
-        this.id = _id;
-        this.name = name || null;
-        this.age = age || null;
-        this.gender = gender || null;
-        this.location = location || null;
-        this.mobile_number = mobile_number || null;
-        this.otp = otp || null;
-        this.is_verified = Boolean(is_verified);
-        this.created_at = created_at || null;
+        this.id = data._id;
+        this.name = data.name || null;
+        this.age = data.age || null;
+        this.gender = data.gender || null;
+        this.location = data.location || null;
+        this.mobile_number = data.mobile_number || null;
+        this.otp_expires_at = data.otp_expires_at || null;
+        this.is_verified = Boolean(data.is_verified);
+
+        // ✅ handle mongoose timestamps
+        this.created_at = data.created_at || data.createdAt || null;
+        this.updated_at = data.updatedAt || null;
+
+        // ❌ DO NOT expose OTP
     }
+
+
+
 }
 
+
 module.exports = CitizenEntity;
-
-
-
-
