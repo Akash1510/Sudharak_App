@@ -16,7 +16,8 @@ class CitizenEntity {
 
         // ❌ DO NOT expose OTP
     }
-
+ 
+    
 
 
 }

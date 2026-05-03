@@ -25,50 +25,43 @@ class CitizenService {
     static async requestOTP({ name, mobile_number, location }) {
 
         if (!mobile_number) {
-            throw new Error("Mobile Number is required");
-        }
-
-        if (!/^\+91\d{10}$/.test(mobile_number)) {
-            throw new Error("Invalid mobile number");
+            throw new Error('Mobile Number is required');
         }
 
         const otp = this.generateOTP();
         const hashedOtp = await bcrypt.hash(otp, 10);
-        const expiry = new Date(Date.now() + 5 * 60 * 1000);
 
-        const citizen = await CitizenRepository.createOrUpdateForOTP({
+        // const expiry = new Date(Date.now() + 5 * 60 * 1000);
+
+        // store or update the Citizen with otp
+
+        const Citizen = await CitizenRepository.CreateOrUpdateForOTP({
             name,
             mobile_number,
             location,
             otp: hashedOtp,
-            otp_expires_at: expiry
+            otp_expires_at: 5
         });
 
-        if (!citizen) {
-            throw new Error("Failed to create OTP request");
-        }
-
+        // send otp via Twilio SMS gateway
         try {
+
             await client.messages.create({
-                body: `Your Sudharak App OTP is ${otp}. Do not share it.`,
+                body: `Your Sudharak App OTP is ${otp}. Do not share it with anyone. valid for 5 minutes only.`,
                 from: process.env.TWILIO_PHONE_NUMBER,
                 to: mobile_number
+
             });
+
         } catch (error) {
-            console.log(error);
-
-            await CitizenRepository.updateProfile(citizen.id, {
-                otp: null,
-                otp_expires_at: null
-            });
-
-            throw new Error("Failed to send OTP");
+            console.log(error)
+            throw new Error('Failed to send OTP');
         }
 
         return {
-            message: "OTP sent successfully",
-            citizen: citizen.id
-        };
+            message: 'OTP sent successfully',
+            citizen: Citizen.id
+        }
     }
 
 
@@ -92,14 +85,10 @@ class CitizenService {
 
         }
 
-        if (!citizen.otp) {
-            throw new Error("No OTP found. Please request again.");
-        }
-        // 3️⃣ Check OTP expiry
-        if (!citizen.otp_expires_at || citizen.otp_expires_at < new Date()) {
-            throw new Error("OTP expired");
-        }
-
+        // // 3️⃣ Check OTP expiry
+        // if (!citizen.otp_expires_at || citizen.otp_expires_at < new Date()) {
+        //     throw new Error("OTP expired");
+        // }
 
         // 4️⃣ Compare hashed OTP
         const isValid = await bcrypt.compare(otp, citizen.otp);
@@ -134,26 +123,24 @@ class CitizenService {
             throw new Error("User Id is Required");
         }
 
-        if (profileData.age !== undefined && typeof profileData.age !== "number") {
-            throw new Error("Age must be number");
-        }
-
-        const allowedFields = ["name", "age", "gender", "location"];
+        const allowdfield = ["name", "age", "gender", "location"];
         const filterData = {};
 
-        for (let key of allowedFields) {
+        for (let key of allowdfield) {
             if (profileData[key] !== undefined) {
                 filterData[key] = profileData[key];
             }
         }
 
-        const updateUser = await CitizenRepository.updateProfile(user_id, filterData);
+        const updateUser = await CitizenRepository.UpdateProfile(user_id, filterData);
 
         if (!updateUser) {
             throw new Error("User Not found");
         }
 
-        return updateUser;
+        return new updateUser;
+
+
     }
 
 
@@ -168,7 +155,7 @@ class CitizenService {
             throw new Error("User Not Found");
         }
 
-        return citizen;
+        return new citizen;
     }
 
 
