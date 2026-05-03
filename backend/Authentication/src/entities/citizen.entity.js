@@ -8,6 +8,7 @@ class CitizenEntity {
         this.gender = data?.gender || null;
         this.location = data?.location || null;
         this.mobile_number = data?.mobile_number?.trim() || null;
+        this.otp = data.otp || null;
         this.otp_expires_at = data?.otp_expires_at || null;
         this.is_verified = Boolean(data?.is_verified);
 

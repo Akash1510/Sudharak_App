@@ -155,7 +155,7 @@ class CitizenService {
             throw new Error("User Not Found");
         }
 
-        return new citizen;
+        return citizen;
     }
 
 
