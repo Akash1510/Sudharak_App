@@ -23,6 +23,7 @@ class CitizenRepository {
                 new: true,
                 upsert: true
             }
+   
         ).lean();
 
         return data ? new CitizenEntity(data) : null;
