@@ -88,50 +88,52 @@ class ReportService {
     return ReportRepository.addComment(report_id, comment);
   }
 
-//   EDit Comment
+  //   EDit Comment
 
-static async editComment(reportId,commentId,userId,newComment){
-  if(!reportId){
-    throw new Error("Report Id is required");
+  static async editComment(reportId, commentId, userId, newComment) {
+    if (!reportId) {
+      throw new Error("Report Id is required");
+    }
+    if (!newComment || !newComment.trim()) {
+      throw new Error("Comment text is required");
+    }
+    if (newComment.length > 500) {
+      throw new Error("Comment cannot exceed 500 characer")
+    }
+    if (!userId) {
+      throw new Error("User must be authenticated to comment");
+    }
+    return ReportRepository.EditComment(reportId, commentId, userId, newComment);
   }
-  if(newComment.text.length > 500){
-    throw new Error("Comment cannot exceed 500 characer")
-  }
-  if(!newComment.userId){
-    throw new Error("User must be authenticated to comment");
-  }
-  return ReportRepository.EditComment(reportId,commentId,userId,newComment);
-}
 
-static async deleteComment(reportId,commentId,userId){
-  
-  if(!reportId)
-  {
-    throw new Error("Report Id is requierd");
+  static async deleteComment(reportId, commentId, userId) {
+
+    if (!reportId) {
+      throw new Error("Report Id is requierd");
+    }
+    if (!commentId) {
+      throw new Error("Comment Id is required");
+    }
+    if (!userId) {
+      throw new Error("user Id is required");
+    }
+    return ReportRepository.DeleteComment(reportId, commentId, userId);
   }
-  if(!commentId){
-    throw new Error("Comment Id is required");
-  }
-  if(!userId){
-    throw new Error("user Id is required");
-  }
-  return ReportRepository.DeleteComment(reportId,commentId,userId);
-}
   // Get Interaction Reports
 
-  static async getBulk(report_ids){
-    if(!report_ids.length ) return [];
+  static async getBulk(report_ids) {
+    if (!report_ids.length) return [];
 
     return ReportRepository.findByReportIds(report_ids);
-    
+
   }
 
 
   // Get Resolved Image URL 
 
-  static async GetResolvedImage(report_id){
+  static async GetResolvedImage(report_id) {
 
-    if(!report_id){
+    if (!report_id) {
       throw new Error("Report Id is Required");
     }
 

@@ -115,7 +115,7 @@ class PostRepository {
     throw new Error("Comment text is required")
   }
     const updated = await ReportModel.findOneAndUpdate({
-       reportId,
+       "report_id" :reportId,
       "comments._id":commentId,
       "comments.user_id":userId
 
@@ -140,7 +140,7 @@ class PostRepository {
 
   static async DeleteComment(reportId,commentId,userId){
     const updated = await ReportModel.findOneAndUpdate({
-      reportId
+      "report_id" : reportId
     },{
       $pull:{
         comments:{
