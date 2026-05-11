@@ -40,5 +40,29 @@ jobs:
             pip install -r requirements.txt
             pip install gunicorn
 
-            echo "Restart services"
+
+             echo "Restart Kafka service"
+
+            sudo systemctl restart kafka
+
+            echo "Waiting for Kafka to become ready..."
+
+            for i in {1..12}; do
+              nc -z localhost 9092 && echo "Kafka is ready!" && break
+              echo "Kafka not ready yet... retrying in 5 seconds"
+              sleep 5
+            done
+
+            echo "Checking Kafka port"
+
+            nc -zv localhost 9092
+
+            echo "Restart PM2 services"
+
             pm2 restart all
+
+            echo "Save PM2 process list"
+
+            pm2 save
+
+            echo "Deployment completed successfully"
