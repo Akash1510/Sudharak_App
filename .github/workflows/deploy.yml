@@ -48,14 +48,14 @@ jobs:
             echo "Waiting for Kafka to become ready..."
 
             for i in {1..12}; do
-              nc -z localhost 9092 && echo "Kafka is ready!" && break
+              nc -z 127.0.0.1 9092 && echo "Kafka is ready!" && break
               echo "Kafka not ready yet... retrying in 5 seconds"
               sleep 5
             done
 
             echo "Checking Kafka port"
 
-            nc -zv localhost 9092
+            nc -zv 127.0.0.1 9092
 
             echo "Restart PM2 services"
 
