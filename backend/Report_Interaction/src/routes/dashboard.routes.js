@@ -31,14 +31,14 @@ router.use(dashboardLimiter); // Rate limit protection
 // /dashboard?page=1&limit=10&status=PENDING
 // ============================================
 
-router.get("/reports", DashboardController.getReports);
+router.get("/report", DashboardController.getReports);
 
 
 // ============================================
 // GET DASHBOARD STATS
 // ============================================
 
-router.get("/stats", DashboardController.getDashboardStats);
+router.get("/stats/report", DashboardController.getDashboardStats);
 
 // ============================================
 // GET SINGLE REPORT

@@ -94,11 +94,11 @@ class DashboardController {
         });
       }
       
-      const reportId = req.params.report_id;
+      const report_id = req.params.reportId;
 
       // Upload to s3 
       const imageUrl = await uploadResolvedImage(req.file.path,
-        reportId , req.file.mimetype
+        report_id , req.file.mimetype
       );
 
       //  call service with s3 url
