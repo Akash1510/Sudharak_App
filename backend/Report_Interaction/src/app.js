@@ -16,7 +16,7 @@ app.use(express.json());
 
 
 app.use("/reports", reportroutes);
-app.use('/dashboards',dashboardroutes);
+app.use("/panel/dashboard", dashboardroutes);
 
 
 app.listen(process.env.PORT,"0.0.0.0", () => {
