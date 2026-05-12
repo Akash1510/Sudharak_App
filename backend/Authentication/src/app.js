@@ -10,9 +10,10 @@ const ConnectDB = require('./config/db');
 ConnectDB()
 // Routes
 
+
+
 const citizenRoutes = require('./routes/citizen.routes');
 const adminRoutes = require('./routes/admin.routes');
-
 
 
 // Middleware
