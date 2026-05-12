@@ -40,7 +40,6 @@ router.get("/reports", DashboardController.getReports);
 
 router.get("/stats", DashboardController.getDashboardStats);
 
-
 // ============================================
 // GET SINGLE REPORT
 // ============================================
