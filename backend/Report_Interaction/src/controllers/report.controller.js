@@ -203,29 +203,27 @@ static async DeleteComment(req,res){
 
 
 // Get  Resolved Image if Status is Resolved
-static async GetResolvedImage(req,res){
-  try{
-    const {reportId} = req.params;
+static async GetResolvedImage(req, res) {
 
-    const result = await ReportService.GetResolvedImage(reportId);
+  try {
 
-    if(result.status !== "Resolved"){
-      return res.status(400).json({
-        success:false,
-        message:"Report is Not Resolved Yet"
-      });
-    }
+    const { reportId } = req.params;
+
+    const imageUrl =
+      await ReportService.GetResolvedImage(reportId);
+
     return res.status(200).json({
-      success:true,
-      data:result
+      success: true,
+      data: imageUrl
     });
 
+  } catch (error) {
 
-  } catch(error){
     return res.status(500).json({
-      success:false,
-      message:error.message
+      success: false,
+      message: error.message
     });
+
   }
 }
 

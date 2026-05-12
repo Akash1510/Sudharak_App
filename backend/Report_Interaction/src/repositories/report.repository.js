@@ -212,11 +212,20 @@ class PostRepository {
 
   // Get Resolved Image URl
 
-  static async findResolvedImage(report_id){
-    const post = await this.findByReportId(report_id);
+  static async findResolvedImage(report_id) {
 
-    return post.resolved_image || null;
+  const post = await this.findByReportId(report_id);
+
+  if (!post) {
+    throw new Error("Report not found");
   }
+
+  if (post.status !== "Resolved") {
+    throw new Error("Report is not resolved yet");
+  }
+
+  return post.resolved_image;
+}
 
 }
 
