@@ -34,7 +34,9 @@ const startConsumer = async () => {
                    const res =  await ReportRepository.createPost(
                             data.report_id,
                             data.department,
-                            data.unresolved_image
+                            data.unresolved_image,
+                            data.description,
+                            data.location
                         );
 
                         console.log("Mongo 3 Interaction Created for : ", res);

@@ -6,13 +6,13 @@ class ReportService {
   // CREATE INTERACTION ENTRY
   // (Called when report created - Kafka/internal)
   // ==========================================
-  static async createPost(report_id, department, unresolved_image) {
+  static async createPost(report_id, department, unresolved_image, description, location) {
 
     if (!report_id) {
       throw new Error("Report ID is required");
     }
 
-    return ReportRepository.createPost(report_id, department,unresolved_image);
+    return ReportRepository.createPost(report_id, department, unresolved_image, description, location);
   }
 
 
