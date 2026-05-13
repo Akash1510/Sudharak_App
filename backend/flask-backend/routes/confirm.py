@@ -164,7 +164,8 @@ def CONFIRM_REPORT():
             "report_id": report_id,
             "department": cached["issue"]["LABEL"],
             "status": "Pending",
-            "location": location
+            "location": location,
+            "unresolved_image": image_url
         })
 
         return jsonify({

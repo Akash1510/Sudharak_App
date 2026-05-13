@@ -6,7 +6,7 @@ class PostRepository {
   // ========================================
   // CREATE INTERACTION ENTRY (When report created)
   // ========================================
-  static async createPost(report_id, department) {
+  static async createPost(report_id, department, unresolved_image) {
 
     if (!report_id) {
       throw new Error("Report ID is required");
@@ -22,7 +22,8 @@ class PostRepository {
       department,
       upvote_count: 0,
       upvoted_by: [],
-      comments: []
+      comments: [],
+      unresolved_image
     });
 
     return new ReportEntity(post);

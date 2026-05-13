@@ -52,6 +52,11 @@ const ReportDashboardSchema = new mongoose.Schema({
     type: String,
     default: null
   },
+  
+  unresolved_image: {
+    type: String,
+    default: null
+  },
 
   resolved_by: {
     type: String,
