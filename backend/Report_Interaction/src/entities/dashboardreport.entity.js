@@ -9,6 +9,7 @@ class DashboardReportEntity {
 
     this.upvote_count = obj.upvote_count;
     this.comment_count = obj.comments?.length || 0;
+    this.unresolved_image = obj.unresolved_image;
 
     this.resolved_image = obj.resolved_image;
     this.resolved_by = obj.resolved_by;
