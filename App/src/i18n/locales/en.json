@@ -1,0 +1,36 @@
+{
+  "welcome": "Welcome",
+  "continue": "Continue",
+
+  "auth": {
+    "enter_mobile": "Enter Mobile Number",
+    "verify_otp": "Verify OTP",
+    "choose_language": "Choose Your Language"
+  },
+
+  "home": {
+    "greeting": "Welcome, {{name}} 👋",
+    "subtitle": "Report and track civic issues easily"
+  },
+
+  "report": {
+    "title": "Report Issue",
+    "description_placeholder": "Describe the issue...",
+    "preview": "Preview Report",
+    "confirm": "Confirm & Submit",
+    "success": "Report Submitted!"
+  },
+
+  "profile": {
+    "title": "Profile",
+    "edit": "Edit Profile",
+    "my_reports": "My Reports"
+  },
+
+  "status": {
+    "pending": "Pending",
+    "in_progress": "In Progress",
+    "resolved": "Resolved",
+    "rejected": "Rejected"
+  }
+}
