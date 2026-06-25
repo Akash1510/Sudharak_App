@@ -79,12 +79,13 @@
     
 
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify,g
 import os, uuid
 from services.detector import DETECT_ISSUE
 from services.enhacer import ENHANCE_TEXT
 from db.cache import set_temp_report
 from services.cloudnary_service import upload_image
+from middlewares.auth_middleware import verify_token
 
 AI_BP = Blueprint("AI_BP", __name__)
 
@@ -94,10 +95,14 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 MAX_IMAGE_SIZE = 5 * 1024 * 1024  # 5MB
 
 @AI_BP.route("/analyze", methods=["POST"])
+@verify_token(required_role="CITIZEN")
 def ANALYZE():
 
     image = request.files.get("IMAGE")
     text = request.form.get("DESCRIPTION", "")
+    
+    user_id = g.user.get("id")
+    location = g.user.get("location")
 
     # 🔥 VALIDATIONS
     if not image:
@@ -138,7 +143,9 @@ def ANALYZE():
             "issue": issue,
             "enhanced_description": enhanced["ENHANCED_TEXT"],
            "image_url": uploaded_image["url"],
-           "public_id": uploaded_image["public_id"]
+           "public_id": uploaded_image["public_id"],
+           "citizen_id": user_id,
+           "location": location
         }
 
         set_temp_report(token, temp_data)
@@ -149,7 +156,8 @@ def ANALYZE():
             "PREVIEW": {
                 "ISSUE": issue,
                 "ENHANCED_DESCRIPTION": enhanced["ENHANCED_TEXT"],
-                "IMAGE_URL": uploaded_image["url"]
+                "IMAGE_URL": uploaded_image["url"],
+                "LOCATION": location
             }
         }), 200
 
