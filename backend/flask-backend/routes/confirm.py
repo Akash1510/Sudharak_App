@@ -99,6 +99,7 @@ from flask import Blueprint, request, jsonify, g
 from middlewares.auth_middleware import verify_token
 from kafka_events.producer import publish_event
 from services.s3_services import upload_unresolved_image
+import cloudinary.uploader
 import os
 CI_BP = Blueprint("CI_BP", __name__)
 
@@ -145,6 +146,7 @@ def CONFIRM_REPORT():
             cached["image_url"],
             report_id
         )
+        cloudinary.uploader.destroy(cached["public_id"])
 
         # 🔥 UPDATE DB
         mongo.db["reports"].update_one(
