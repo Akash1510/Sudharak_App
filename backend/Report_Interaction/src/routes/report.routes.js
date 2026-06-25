@@ -94,6 +94,11 @@ router.get(
   reportExists,
   ReportController.GetResolvedImage
 );
+router.get(
+  "/:reportId/unresolved-image",
+  reportExists,
+  ReportController.GetUnResolvedImage
+);
 
 
 module.exports = router;

@@ -140,6 +140,16 @@ class ReportService {
     return ReportRepository.findResolvedImage(report_id);
 
   }
+  
+   static async GetUnResolvedImage(report_id) {
+
+    if (!report_id) {
+      throw new Error("Report Id is Required");
+    }
+
+    return ReportRepository.findUnResolvedImage(report_id);
+
+  }
 }
 
 module.exports = ReportService;

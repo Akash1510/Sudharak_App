@@ -230,6 +230,19 @@ class PostRepository {
   return post.resolved_image;
 }
 
+// get the Unresolved Image URl
+
+  static async findUnResolvedImage(report_id) {
+
+  const post = await this.findByReportId(report_id);
+
+  if (!post) {
+    throw new Error("Report not found");
+  }
+
+
+  return post.unresolved_image;
+}
 }
 
 module.exports = PostRepository;

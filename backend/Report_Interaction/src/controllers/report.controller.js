@@ -226,6 +226,30 @@ static async GetResolvedImage(req, res) {
 
   }
 }
+// Get  Resolved Image if Status is UnResolved
+static async GetUnResolvedImage(req, res) {
+
+  try {
+
+    const { reportId } = req.params;
+
+    const imageUrl =
+      await ReportService.GetUnResolvedImage(reportId);
+
+    return res.status(200).json({
+      success: true,
+      data: imageUrl
+    });
+
+  } catch (error) {
+
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
+
+  }
+}
 
 }
 
