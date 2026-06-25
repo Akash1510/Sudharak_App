@@ -142,7 +142,7 @@ def CONFIRM_REPORT():
 
         # 🔥 UPLOAD IMAGE TO S3
         image_url = upload_unresolved_image(
-            cached["image_path"],
+            cached["image_url"],
             report_id
         )
 
@@ -154,9 +154,6 @@ def CONFIRM_REPORT():
 
         # 🔥 DELETE CACHE + LOCAL FILE
         delete_temp_report(token)
-
-        if os.path.exists(cached["image_path"]):
-            os.remove(cached["image_path"])
 
         # 🔥 KAFKA EVENT
         publish_event({

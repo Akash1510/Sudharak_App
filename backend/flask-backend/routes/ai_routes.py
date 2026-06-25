@@ -84,6 +84,7 @@ import os, uuid
 from services.detector import DETECT_ISSUE
 from services.enhacer import ENHANCE_TEXT
 from db.cache import set_temp_report
+from services.cloudnary_service import upload_image
 
 AI_BP = Blueprint("AI_BP", __name__)
 
@@ -129,11 +130,15 @@ def ANALYZE():
         # 🔥 TEXT ENHANCEMENT
         enhanced = ENHANCE_TEXT(text, issue["LABEL"])
 
+        # 🔥 UPLOAD IMAGE TO CLOUDINARY
+        uploaded_image = upload_image(image_path)
+
         # 🔥 STORE IN CACHE
         temp_data = {
             "issue": issue,
             "enhanced_description": enhanced["ENHANCED_TEXT"],
-            "image_path": image_path,
+           "image_url": uploaded_image["url"],
+           "public_id": uploaded_image["public_id"]
         }
 
         set_temp_report(token, temp_data)
@@ -144,7 +149,7 @@ def ANALYZE():
             "PREVIEW": {
                 "ISSUE": issue,
                 "ENHANCED_DESCRIPTION": enhanced["ENHANCED_TEXT"],
-                "IMAGE_URL": f"/static/uploads/{image_filename}"
+                "IMAGE_URL": uploaded_image["url"]
             }
         }), 200
 
