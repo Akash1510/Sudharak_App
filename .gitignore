@@ -1,0 +1,22 @@
+# Node
+node_modules
+
+# Python
+venv
+__pycache__
+
+# env
+.env
+
+# vscode
+.vscode
+
+# flutter
+build
+.dart_tool
+
+# runtime uploads
+uploads/
+static/uploads/
+backend/**/uploads/
+backend/**/static/uploads/
