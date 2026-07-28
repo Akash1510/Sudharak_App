@@ -17,7 +17,9 @@ import { useState, useRef } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
 import * as ImageManipulator from "expo-image-manipulator";
+import { useTranslation } from "react-i18next";
 export default function ReportChatScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
 
   const [message, setMessage] = useState("");
@@ -149,6 +151,7 @@ export default function ReportChatScreen() {
         method: "POST",
         headers: {
           Accept: "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: formData,
       });
@@ -256,9 +259,9 @@ export default function ReportChatScreen() {
       <View style={styles.container}>
         {/* HEADER */}
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Report Assistant 🤖</Text>
+          <Text style={styles.headerTitle}>{t("assistant_title")}</Text>
           <Text style={styles.headerSubtitle}>
-            Upload image & describe issue
+            {t("assistant_subtitle")}
           </Text>
         </View>
 
@@ -296,7 +299,7 @@ export default function ReportChatScreen() {
           </TouchableOpacity>
 
           <TextInput
-            placeholder="Describe issue..."
+            placeholder={t("describe_issue")}
             value={message}
             onChangeText={setMessage}
             style={styles.input}

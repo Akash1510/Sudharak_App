@@ -5,7 +5,10 @@ import {
   Animated,
   ActivityIndicator,
   Image,
+  Modal,
+  TouchableOpacity,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useRef, useState } from "react";
 import styles from "./ReportDetailStyles";
 import { getReportDetail } from "./reportApi";
@@ -15,18 +18,41 @@ export default function ReportDetailScreen({ route }) {
 
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(20)).current;
+  const pulseAnim = useRef(new Animated.Value(1)).current;
 
   const intervalRef = useRef(null);
 
   useEffect(() => {
+    const fetchToken = async () => {
+      const storedToken = await AsyncStorage.getItem("token");
+      setToken(storedToken);
+    };
+    fetchToken();
     fetchDetail();
 
     intervalRef.current = setInterval(() => {
       fetchDetail(true);
-    }, 5000);
+    }, 2000);
+
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, {
+          toValue: 0.4,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
 
     Animated.parallel([
       Animated.timing(fadeAnim, {
@@ -48,7 +74,8 @@ export default function ReportDetailScreen({ route }) {
     try {
       if (!silent) setLoading(true);
       const res = await getReportDetail(reportId);
-      setData(res);
+      const reportData = res?.data || res?.DATA || res;
+      setData(reportData);
     } catch (err) {
       console.log("Detail Error:", err);
     } finally {
@@ -61,7 +88,16 @@ export default function ReportDetailScreen({ route }) {
   }
 
   const steps = ["Pending", "In Progress", "Resolved"];
-  const currentIndex = steps.indexOf(data?.status);
+
+  const getNormalizedStatus = (status) => {
+    if (!status) return "Pending";
+    const s = status.toLowerCase();
+    if (s.includes("progress")) return "In Progress";
+    if (s.includes("resolve")) return "Resolved";
+    return "Pending";
+  };
+
+  const currentIndex = steps.indexOf(getNormalizedStatus(data?.status));
 
   return (
     <ScrollView style={styles.container}>
@@ -94,14 +130,16 @@ export default function ReportDetailScreen({ route }) {
       >
         {/* INFO CARD */}
         <View style={styles.card}>
-          <Text style={styles.infoText}>📍 {data?.location}</Text>
           <Text style={styles.infoText}>
             🕒 Last updated: {data?.updated_at || "Now"}
           </Text>
 
-          <Text style={styles.liveText}>
-            🔄 Live status updating...
-          </Text>
+          <View style={styles.liveContainer}>
+            <Animated.View style={[styles.liveDot, { opacity: pulseAnim }]} />
+            <Text style={styles.liveText}>
+              Live status updating...
+            </Text>
+          </View>
         </View>
 
         {/* STATUS TRACKER */}
@@ -143,7 +181,9 @@ export default function ReportDetailScreen({ route }) {
 
                   {isActive && (
                     <Text style={styles.activeText}>
-                      Currently in progress
+                      {step === "Pending" && "Awaiting review"}
+                      {step === "In Progress" && "Currently in progress"}
+                      {step === "Resolved" && "Issue successfully resolved"}
                     </Text>
                   )}
 
@@ -152,12 +192,47 @@ export default function ReportDetailScreen({ route }) {
                       Completed
                     </Text>
                   )}
+
+                  {step === "Resolved" && (isActive || isCompleted) && (
+                    <TouchableOpacity
+                      activeOpacity={0.8}
+                      style={styles.resolvedThumbnailContainer}
+                      onPress={() => setModalVisible(true)}
+                    >
+                      <Image
+                        source={{
+                          uri: `https://sudharak-resolved-images-548685422716-ap-south-1-an.s3.ap-south-1.amazonaws.com/${reportId}_resolved.png`
+                        }}
+                        style={styles.resolvedThumbnail}
+                        resizeMode="cover"
+                      />
+                    </TouchableOpacity>
+                  )}
                 </View>
               </View>
             );
           })}
         </View>
       </Animated.View>
+
+      {/* RESOLVED IMAGE MODAL */}
+      <Modal visible={modalVisible} transparent={true} animationType="fade" onRequestClose={() => setModalVisible(false)}>
+        <View style={styles.modalOverlay}>
+          <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+            <Text style={styles.closeButtonText}>Close</Text>
+          </TouchableOpacity>
+          <View style={styles.modalContent}>
+            <Image
+              source={{
+                uri: `https://sudharak-resolved-images-548685422716-ap-south-1-an.s3.ap-south-1.amazonaws.com/${reportId}_resolved.png`
+              }}
+              style={styles.fullImage}
+              resizeMode="contain"
+            />
+          </View>
+        </View>
+      </Modal>
+
     </ScrollView>
   );
 }

@@ -7,10 +7,12 @@ import {
   Alert,
 } from "react-native";
 import { useState, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import styles from "./OTPVerificationStyles";
 
 export default function OTPVerificationScreen({ navigation, route }) {
+  const { t } = useTranslation();
   const { mobile_number } = route.params || {};
 
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -110,9 +112,9 @@ export default function OTPVerificationScreen({ navigation, route }) {
   return (
     <View style={styles.container}>
       {/* TITLE */}
-      <Text style={styles.title}>Verify OTP 🔐</Text>
+      <Text style={styles.title}>{t("verify_otp_title")}</Text>
       <Text style={styles.subtitle}>
-        Enter the 6-digit code sent to your phone
+        {t("enter_code")}
       </Text>
 
       {/* OTP BOXES */}
@@ -144,14 +146,14 @@ export default function OTPVerificationScreen({ navigation, route }) {
           onPress={handleVerify}
           activeOpacity={0.8}
         >
-          <Text style={styles.buttonText}>Verify</Text>
+          <Text style={styles.buttonText}>{t("verify")}</Text>
         </TouchableOpacity>
       </Animated.View>
 
       {/* RESEND */}
       <Text style={styles.resendText}>
-        Didn’t receive code?{" "}
-        <Text style={styles.resendLink}>Resend</Text>
+        {t("did_not_receive")}
+        <Text style={styles.resendLink}>{t("resend")}</Text>
       </Text>
     </View>
   );

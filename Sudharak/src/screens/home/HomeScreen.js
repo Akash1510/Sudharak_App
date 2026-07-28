@@ -11,10 +11,12 @@ import {
 } from "react-native";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 import styles from "./HomeStyles";
 import { getFeed, toggleUpvote, removeUpvote } from "./reportApi";
 
 export default function HomeScreen({ navigation }) {
+  const { t } = useTranslation();
   const userName = "Citizens";
 
   const [feedData, setFeedData] = useState([]);
@@ -27,27 +29,73 @@ export default function HomeScreen({ navigation }) {
   // ============================================
   // 🔥 FETCH FEED
   // ============================================
-  const fetchFeed = async () => {
+  const fetchFeed = async (isBackground = false) => {
     try {
-      console.log("🔥 Fetching Feed...");
+      if (!isBackground) console.log("🔥 Fetching Feed...");
 
       const response = await getFeed();
 
-      console.log("📦 Feed Response:", response);
+      if (!isBackground) console.log("📦 Feed Response:", response);
 
       if (response.success) {
-        setFeedData(response.data);
+        setFeedData((prev) => {
+          if (!isBackground || prev.length === 0) {
+            return response.data;
+          }
+
+          // Smart background merge: update only status and interactions to prevent full re-renders
+          let hasChanges = false;
+          const updated = prev.map((oldItem) => {
+            const newItem = response.data.find(
+              (n) => n.report_id === oldItem.report_id
+            );
+            if (newItem) {
+              if (
+                newItem.status !== oldItem.status ||
+                JSON.stringify(newItem.interaction) !==
+                  JSON.stringify(oldItem.interaction)
+              ) {
+                hasChanges = true;
+                return {
+                  ...oldItem,
+                  status: newItem.status,
+                  interaction: newItem.interaction,
+                };
+              }
+            }
+            return oldItem;
+          });
+
+          // If new posts arrived, update the whole array
+          if (response.data.length !== prev.length) {
+            return response.data;
+          }
+
+          return hasChanges ? updated : prev;
+        });
       } else {
-        console.log("⚠️ Feed not successful");
-        setFeedData([]);
+        if (!isBackground) {
+          console.log("⚠️ Feed not successful");
+          setFeedData((prev) => prev.length > 0 ? prev : []);
+        }
       }
     } catch (error) {
       console.log("❌ Feed Error:", error);
-      setFeedData([]);
+      if (!isBackground) setFeedData((prev) => prev.length > 0 ? prev : []);
     } finally {
-      setLoading(false);
+      if (!isBackground) {
+        setLoading(false);
+      }
       setRefreshing(false);
     }
+  };
+
+  const getFormattedStatus = (status) => {
+    if (!status) return t("status_pending");
+    const s = status.toLowerCase();
+    if (s.includes("resolve")) return t("status_resolved");
+    if (s.includes("progress")) return t("status_in_progress");
+    return t("status_pending");
   };
 
   // ============================================
@@ -56,11 +104,10 @@ export default function HomeScreen({ navigation }) {
   useEffect(() => {
     fetchFeed();
 
-    // 🔁 Auto refresh every 2 seconds
+    // 🔁 Auto refresh every 5 seconds for snappy status updates
     const interval = setInterval(() => {
-      console.log("🔄 Auto refreshing feed...");
-      fetchFeed();
-    }, 20000);
+      fetchFeed(true);
+    }, 5000);
 
     // 🎬 Animation
     Animated.parallel([
@@ -155,9 +202,9 @@ export default function HomeScreen({ navigation }) {
       <StatusBar barStyle="light-content" />
       {/* HEADER */}
       <View style={styles.header}>
-        <Text style={styles.title}>Welcome, {userName} 👋</Text>
+        <Text style={styles.title}>{t("welcome_user", { userName })}</Text>
         <Text style={styles.subtitle}>
-          Report and track civic issues easily
+          {t("report_track_subtitle")}
         </Text>
       </View>
 
@@ -175,7 +222,7 @@ export default function HomeScreen({ navigation }) {
           {/* EMPTY STATE */}
           {feedData.length === 0 ? (
             <Text style={{ textAlign: "center", marginTop: 50 }}>
-              No reports found 🚫
+              {t("no_reports_found")}
             </Text>
           ) : (
             feedData.map((item, index) => {
@@ -211,22 +258,27 @@ export default function HomeScreen({ navigation }) {
                     <View style={styles.cardContent}>
                       {/* TITLE */}
                       <Text style={styles.cardTitle}>
-                        {item.issue?.LABEL || "No Title"}
+                        {item.issue?.LABEL || t("no_title")}
                       </Text>
 
                       {/* DESCRIPTION */}
                       <Text style={{ color: "#6B7280", marginTop: 6 }}>
-                        {item.enhanced_description || "No description"}
+                        {item.enhanced_description || t("no_description")}
                       </Text>
 
                       {/* LOCATION */}
                       <Text style={{ color: "#9CA3AF", marginTop: 4 }}>
-                        📍 {item.location || "Unknown"}
+                        📍 {item.location || t("unknown")}
                       </Text>
 
                       {/* STATUS */}
-                      <Text style={{ marginTop: 6, fontWeight: "600" }}>
-                        Status: {item.status || "Pending"}
+                      <Text style={{ 
+                        marginTop: 6, 
+                        fontWeight: "600",
+                        color: getFormattedStatus(item.status) === t('status_resolved') ? '#10B981' : 
+                               getFormattedStatus(item.status) === t('status_in_progress') ? '#F59E0B' : '#4F46E5'
+                      }}>
+                        {t("status_label")}: {getFormattedStatus(item.status)}
                       </Text>
 
                       {/* ACTIONS */}
@@ -269,7 +321,7 @@ export default function HomeScreen({ navigation }) {
                         {/* 🔗 SHARE */}
                         <TouchableOpacity style={styles.actionBtn}>
                           <Text style={styles.actionIcon}>🔗</Text>
-                          <Text style={styles.actionText}>Share</Text>
+                          <Text style={styles.actionText}>{t("share")}</Text>
                         </TouchableOpacity>
                       </View>
                     </View>

@@ -23,7 +23,22 @@ const getHeaders = async () => {
 // 🔥 COMMON RESPONSE HANDLER
 // ============================================
 const handleResponse = async (res) => {
+  const isJson = res.headers.get("content-type")?.includes("application/json");
   let data;
+
+  if (!res.ok) {
+    if (isJson) {
+      try {
+        data = await res.json();
+      } catch (e) {
+        throw new Error(`HTTP ${res.status}: Invalid JSON error response`);
+      }
+      throw new Error(data?.message || `HTTP ${res.status}: API Error`);
+    } else {
+      const text = await res.text();
+      throw new Error(`HTTP ${res.status}: ${text.slice(0, 100)}`);
+    }
+  }
 
   try {
     data = await res.json();
@@ -33,10 +48,6 @@ const handleResponse = async (res) => {
 
   console.log("📡 Status:", res.status);
   console.log("📦 Response:", data);
-
-  if (!res.ok) {
-    throw new Error(data?.message || "API Error");
-  }
 
   // ✅ Normalize response
   return {

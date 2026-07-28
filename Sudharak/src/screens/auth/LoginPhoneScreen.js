@@ -7,9 +7,11 @@ import {
   Alert,
 } from "react-native";
 import { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import styles from "./LoginPhoneStyles";
 
 export default function LoginPhoneScreen({ navigation }) {
+  const { t } = useTranslation();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [location, setLocation] = useState("");
@@ -81,14 +83,14 @@ export default function LoginPhoneScreen({ navigation }) {
           },
         ]}
       >
-        <Text style={styles.title}>Get Started 👋</Text>
+        <Text style={styles.title}>{t("get_started")}</Text>
         <Text style={styles.subtitle}>
-          Enter your details to create an account
+          {t("enter_details")}
         </Text>
 
         {/* NAME INPUT */}
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Full Name</Text>
+          <Text style={styles.label}>{t("full_name")}</Text>
           <TextInput
             placeholder="John Doe"
             value={name}
@@ -100,7 +102,7 @@ export default function LoginPhoneScreen({ navigation }) {
 
         {/* PHONE INPUT */}
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Mobile Number</Text>
+          <Text style={styles.label}>{t("mobile_number")}</Text>
           <TextInput
             placeholder="9876543210"
             keyboardType="numeric"
@@ -113,7 +115,7 @@ export default function LoginPhoneScreen({ navigation }) {
 
         {/* LOCATION INPUT */}
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Location</Text>
+          <Text style={styles.label}>{t("location")}</Text>
           <TextInput
             placeholder="Mumbai, Maharashtra"
             value={location}
@@ -129,11 +131,11 @@ export default function LoginPhoneScreen({ navigation }) {
           onPress={handleContinue}
           activeOpacity={0.8}
         >
-          <Text style={styles.buttonText}>Continue</Text>
+          <Text style={styles.buttonText}>{t("continue")}</Text>
         </TouchableOpacity>
 
         <Text style={styles.footerText}>
-          By continuing, you agree to our Terms of Service and Privacy Policy
+          {t("agree_terms")}
         </Text>
       </Animated.View>
     </View>

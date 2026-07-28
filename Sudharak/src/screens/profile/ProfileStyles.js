@@ -130,6 +130,55 @@ const styles = StyleSheet.create({
     listContent: {
         paddingBottom: 20,
     },
+    
+    statsCard: {
+        backgroundColor: "#FFFFFF",
+        borderRadius: 24,
+        padding: 20,
+        marginHorizontal: 16,
+        marginBottom: 24,
+        shadowColor: "#000",
+        shadowOpacity: 0.08,
+        shadowRadius: 8,
+        shadowOffset: { width: 0, height: 4 },
+        elevation: 4,
+    },
+    statsTitle: {
+        fontSize: 16,
+        fontWeight: "bold",
+        color: "#1F2937",
+        marginBottom: 16,
+    },
+    stackedBarContainer: {
+        height: 12,
+        flexDirection: "row",
+        borderRadius: 6,
+        overflow: "hidden",
+        backgroundColor: "#E5E7EB",
+        marginBottom: 16,
+    },
+    barSegment: {
+        height: "100%",
+    },
+    legendContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+    },
+    legendItem: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    legendDot: {
+        width: 10,
+        height: 10,
+        borderRadius: 5,
+        marginRight: 6,
+    },
+    legendText: {
+        fontSize: 12,
+        color: "#4B5563",
+        fontWeight: "500",
+    },
 });
 
 export default styles;

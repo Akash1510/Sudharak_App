@@ -38,7 +38,7 @@ export default function ReportPreviewScreen({ navigation, route }) {
   // 🔥 Prepare preview data
   const reportData = {
     image: preview?.IMAGE_URL
-      ? `http://65.2.186.163${preview.IMAGE_URL}`
+      ? `${preview.IMAGE_URL}`
       : "https://via.placeholder.com/400",
 
     issue: preview?.ISSUE?.LABEL || "Unknown Issue",
@@ -46,7 +46,7 @@ export default function ReportPreviewScreen({ navigation, route }) {
     description:
       preview?.ENHANCED_DESCRIPTION || "No description available",
 
-    location: "pune", // optional (you can pass from previous screen)
+    location: preview.LOCATION, // optional (you can pass from previous screen)
   };
 
   // 🔥 CONFIRM REPORT API

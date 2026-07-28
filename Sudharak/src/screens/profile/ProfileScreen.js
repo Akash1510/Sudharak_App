@@ -27,6 +27,10 @@ export default function ProfileScreen({ navigation }) {
   useEffect(() => {
     fetchReports();
 
+    const interval = setInterval(() => {
+      fetchReports(true);
+    }, 5000);
+
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
@@ -39,6 +43,8 @@ export default function ProfileScreen({ navigation }) {
         useNativeDriver: true,
       }),
     ]).start();
+
+    return () => clearInterval(interval);
   }, []);
 
   // 🔄 Refresh profile when screen comes into focus
@@ -49,16 +55,32 @@ export default function ProfileScreen({ navigation }) {
   );
 
   // 📊 Fetch Reports
-  const fetchReports = async () => {
+  const fetchReports = async (isBackground = false) => {
     try {
+      if (!isBackground) setLoading(true);
       const res = await getUserReports();
       if (res.success) {
-        setReports(res.data || []);
+        setReports((prev) => {
+          if (!isBackground || prev.length === 0) return res.data || [];
+          
+          let hasChanges = false;
+          const updated = prev.map((oldItem) => {
+            const newItem = res.data.find(n => n.report_id === oldItem.report_id);
+            if (newItem && newItem.status !== oldItem.status) {
+              hasChanges = true;
+              return { ...oldItem, status: newItem.status };
+            }
+            return oldItem;
+          });
+          
+          if (res.data.length !== prev.length) return res.data;
+          return hasChanges ? updated : prev;
+        });
       }
     } catch (err) {
       console.log("Reports Error:", err);
     } finally {
-      setLoading(false);
+      if (!isBackground) setLoading(false);
     }
   };
 
@@ -102,29 +124,55 @@ export default function ProfileScreen({ navigation }) {
       ]}
     >
       <TouchableOpacity
-        style={styles.reportCard}
+        style={[styles.reportCard, { paddingVertical: 14, paddingHorizontal: 16 }]}
         onPress={() => navigation.navigate("ReportDetail", { reportId: item.report_id })}
+        activeOpacity={0.7}
       >
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.reportTitle}>{item.issue?.LABEL || "Unknown Issue"}</Text>
-            <Text style={{ color: "#6B7280", fontSize: 13, marginTop: 4 }}>📍 {item.location || "No location"}</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Image 
+            source={{ uri: `https://sudharak-unresolved-images-548685422716-ap-south-1-an.s3.ap-south-1.amazonaws.com/${item.report_id}.jpg` }} 
+            style={{ width: 56, height: 56, borderRadius: 12, marginRight: 14 }}
+          />
+          <View style={{ flex: 1, paddingRight: 8 }}>
+            <Text style={[styles.reportTitle, { fontSize: 16 }]} numberOfLines={1}>
+              {item.issue?.LABEL || "Report Issue"}
+            </Text>
+            <Text style={{ color: "#6B7280", fontSize: 13, marginTop: 4 }} numberOfLines={1}>
+              📍 {item.location || "Location not specified"}
+            </Text>
           </View>
           <View style={[
             styles.statusBadge,
-            item.status === 'Resolved' ? styles.statusResolved :
-              item.status === 'Pending' ? styles.statusPending : styles.statusDefault
+            { paddingHorizontal: 10, paddingVertical: 6, borderRadius: 12 },
+            (item.status?.toLowerCase().includes('resolve')) ? styles.statusResolved :
+              (item.status?.toLowerCase().includes('progress')) ? styles.statusDefault :
+                styles.statusPending
           ]}>
             <Text style={[
               styles.statusText,
-              item.status === 'Resolved' ? styles.statusTextResolved :
-                item.status === 'Pending' ? styles.statusTextPending : styles.statusTextDefault
-            ]}>{item.status || "Pending"}</Text>
+              { fontSize: 12, fontWeight: '700' },
+              (item.status?.toLowerCase().includes('resolve')) ? styles.statusTextResolved :
+                (item.status?.toLowerCase().includes('progress')) ? styles.statusTextDefault :
+                  styles.statusTextPending
+            ]}>
+              {item.status?.toLowerCase().includes('resolve') ? "Resolved" :
+                item.status?.toLowerCase().includes('progress') ? "In Progress" : "Pending"}
+            </Text>
           </View>
         </View>
       </TouchableOpacity>
     </Animated.View>
   );
+
+  // Analytics logic
+  const totalReports = reports.length;
+  const resolvedCount = reports.filter(r => r.status?.toLowerCase().includes('resolve')).length;
+  const inProgressCount = reports.filter(r => r.status?.toLowerCase().includes('progress')).length;
+  const pendingCount = totalReports - resolvedCount - inProgressCount;
+  
+  const resolvedWidth = totalReports > 0 ? (resolvedCount / totalReports) * 100 : 0;
+  const inProgressWidth = totalReports > 0 ? (inProgressCount / totalReports) * 100 : 0;
+  const pendingWidth = totalReports > 0 ? (pendingCount / totalReports) * 100 : 0;
 
   return (
     <View style={styles.container}>
@@ -171,6 +219,32 @@ export default function ProfileScreen({ navigation }) {
           <Text style={{ textAlign: 'center', color: '#EF4444' }}>Profile load error</Text>
         )}
       </View>
+
+      {/* STATISTICS GRAPH */}
+      {totalReports > 0 && (
+        <View style={styles.statsCard}>
+          <Text style={styles.statsTitle}>Report Analytics</Text>
+          <View style={styles.stackedBarContainer}>
+            <View style={[styles.barSegment, { width: `${resolvedWidth}%`, backgroundColor: '#16A34A' }]} />
+            <View style={[styles.barSegment, { width: `${inProgressWidth}%`, backgroundColor: '#2563EB' }]} />
+            <View style={[styles.barSegment, { width: `${pendingWidth}%`, backgroundColor: '#D97706' }]} />
+          </View>
+          <View style={styles.legendContainer}>
+            <View style={styles.legendItem}>
+              <View style={[styles.legendDot, { backgroundColor: '#16A34A' }]} />
+              <Text style={styles.legendText}>Resolved ({resolvedCount})</Text>
+            </View>
+            <View style={styles.legendItem}>
+              <View style={[styles.legendDot, { backgroundColor: '#2563EB' }]} />
+              <Text style={styles.legendText}>In Progress ({inProgressCount})</Text>
+            </View>
+            <View style={styles.legendItem}>
+              <View style={[styles.legendDot, { backgroundColor: '#D97706' }]} />
+              <Text style={styles.legendText}>Pending ({pendingCount})</Text>
+            </View>
+          </View>
+        </View>
+      )}
 
       {/* REPORTS */}
       <Text style={styles.sectionTitle}>My Reports</Text>
